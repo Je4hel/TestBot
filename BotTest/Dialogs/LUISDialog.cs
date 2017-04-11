@@ -45,18 +45,20 @@ namespace BotTest.Dialogs
             if (!isBoxConfigured)
             {
                 // Configure box
-                context.Call(new FormDialog<MessageBox>(new MessageBox(), this._configureMessageBox, FormOptions.PromptInStart), async (c, r) =>
+                context.Call(new FormDialog<MessageBox>(new MessageBox(), this._configureMessageBox, FormOptions.PromptInStart), async (dialogContext, awaitableResult) =>
                 {
-                    await c.PostAsync("Message Box configurée !");
+                    var r = await awaitableResult;
+
+                    await dialogContext.PostAsync("Message Box configurée !");
+                    context.Wait(MessageReceived);
                 });
             }
             else
             {
                 // Send message
                 await context.PostAsync("Votre Message Box est déjà configurée. Le message a été envoyé !");
+                context.Wait(MessageReceived);
             }
-
-            context.Wait(MessageReceived);
         }
 
         [LuisIntent("ConfigureMessageBox")]
