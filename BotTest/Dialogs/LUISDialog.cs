@@ -45,13 +45,7 @@ namespace BotTest.Dialogs
             if (!isBoxConfigured)
             {
                 // Configure box
-                context.Call(new FormDialog<MessageBox>(new MessageBox(), this._configureMessageBox, FormOptions.PromptInStart), async (dialogContext, awaitableResult) =>
-                {
-                    var r = await awaitableResult;
-
-                    await dialogContext.PostAsync("Message Box configurée !");
-                    context.Wait(MessageReceived);
-                });
+                context.Call(new FormDialog<MessageBox>(new MessageBox(), this._configureMessageBox, FormOptions.PromptInStart), ConfigurationCallback);
             }
             else
             {
@@ -74,6 +68,14 @@ namespace BotTest.Dialogs
 
         private async Task LoopBackCallback(IDialogContext context, IAwaitable<object> result)
         {
+            context.Wait(MessageReceived);
+        }
+
+        private async Task ConfigurationCallback(IDialogContext context, IAwaitable<object> result)
+        {
+            var r = await result;
+
+            await context.PostAsync("Message Box configurée !");
             context.Wait(MessageReceived);
         }
     }
